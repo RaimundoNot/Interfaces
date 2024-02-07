@@ -3,10 +3,12 @@ package application;
 import model.entities.Invoice;
 import model.entities.Vehicle;
 import model.entities.carRental;
+import model.services.BrazilTaxService;
+import model.services.RentalService;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
+
 import java.util.Locale;
 import java.util.Scanner;
 
@@ -28,15 +30,20 @@ public class Program {
 
         carRental cr = new carRental(start, finish, new Vehicle(carModel));
 
-        //implementado somente as primeiras associações do código, como data-hora e o objeto carRental.
 
-        //A lógica da fatura será resolvida amanha.
         System.out.print("Entre com o preço por hora: ");
         double pricePerHour = sc.nextDouble();
         System.out.print("Entre com o preço por dia: ");
         double pricePerDay = sc.nextDouble();
+
+        RentalService rentalService = new RentalService(pricePerHour, pricePerDay, new BrazilTaxService());
+
+        rentalService.processInvoice(cr);
+
         System.out.println("FATURA:");
-        System.out.print("Pagamento basico: ");
+        System.out.println("Pagamento basico: " + String.format("%.2f", cr.getInvoice().getBasicPayment()));
+        System.out.println("Imposto: " + String.format("%.2f", cr.getInvoice().getTax()));
+        System.out.println("Pagamento total: " + String.format("%.2f",cr.getInvoice().getTotalPayment()));
 
 
         sc.close();
